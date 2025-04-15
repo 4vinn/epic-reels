@@ -52,7 +52,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           uid: userCredentials.user.uid,
           name: name!,
           email,
-          password,
+          password, //after signing up, we send user's data to firestore
         });
 
         if (!result?.success) {
@@ -76,7 +76,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         }
         await signIn({
           email,
-          idToken,
+          idToken, //if sign in successfull, we send email and idToken to generate session cookier for user
         });
         toast.success("Sign in successfully");
         router.push("/");

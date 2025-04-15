@@ -1,3 +1,4 @@
+//firebase admin SDK (used on server-side of the app to interact with firebase services - creating, verifying and deleting)
 import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";

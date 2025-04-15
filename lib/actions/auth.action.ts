@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 
 const ONE_WEEK = 60 * 60 * 24 * 7;
 
+//checks if a user already exists in the Firestore database. If not, it creates a new user record.
 export async function signUp(params: SignUpParams) {
   const { uid, name, email } = params;
 
@@ -40,6 +41,7 @@ export async function signUp(params: SignUpParams) {
     };
   }
 }
+//verifies the user by using the email and idToken from Firebase Authentication, then creates a session cookie
 export async function signIn(params: SignInParams) {
   const { email, idToken } = params;
   try {
@@ -75,7 +77,8 @@ export async function setSessionCookie(idToken: string) {
   });
 }
 
-// to prevent access to protected routes
+// ------to prevent access to protected routes-----
+//checks if a session cookie exists and verifies the user's session by decoding the cookie and fetching the corresponding user record from Firestore
 export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();
 
@@ -102,7 +105,7 @@ export async function getCurrentUser(): Promise<User | null> {
     return null;
   }
 }
-//if 'user' exist, its authenticated
+//checks whether a user is authenticated by verifying if the getCurrentUser() function returns a valid user.
 export async function isAuthenticated() {
   const user = await getCurrentUser();
   return !!user;
