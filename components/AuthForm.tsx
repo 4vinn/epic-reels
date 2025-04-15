@@ -56,7 +56,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
         });
 
         if (!result?.success) {
-          toast.error(result?.message);
+          toast.error("Oops, There was an error!", {
+            description: result?.message,
+          });
           return;
         }
 
@@ -83,7 +85,9 @@ const AuthForm = ({ type }: { type: FormType }) => {
       }
     } catch (error) {
       console.log(error);
-      toast.error(`There was an error: ${error}`);
+      toast.error("Oops, There was an error!", {
+        description: `${error}`,
+      });
     }
   }
 
