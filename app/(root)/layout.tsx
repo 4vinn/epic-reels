@@ -12,12 +12,17 @@ const RootLayout = async ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="root-layout">
-      <nav className="flex flex-row justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.svg" alt="logo" width={38} height={32} />
-          <h2 className="text-primary-100">PrepTalk</h2>
+      <nav className="fixed top-0 left-0 w-full flex justify-between px-2 md:px-28 py-2 z-50 bg-[#1f1f1f99] backdrop-blur-xl">
+        <Link href="/" className="flex items-center gap-1">
+          <Image
+            src="/logo2.png"
+            className="bg-white rounded-sm p-[2px]"
+            alt="logo"
+            width={30}
+            height={30}
+          />
+          <h3 className="text-primary-100">PrepTalk</h3>
         </Link>
-
         <SignOutButton />
       </nav>
       {children}

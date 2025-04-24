@@ -18,7 +18,7 @@ const SignOutButton = () => {
 
   return (
     <>
-      <Button onClick={handleSignOut} className="btn-primary max-sm:w-full">
+      <Button onClick={handleSignOut} className="btn-primary ">
         Sign Out
       </Button>
     </>

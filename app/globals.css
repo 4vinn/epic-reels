@@ -10,8 +10,10 @@
   --color-destructive-100: #f75353;
   --color-destructive-200: #c44141;
 
-  --color-primary-100: #dddfff;
-  --color-primary-200: #cac5fe;
+  /* --color-primary-100: #dddfff; */
+  /* --color-primary-200: #cac5fe; */
+  --color-primary-100: #f2f2f5;
+  --color-primary-200: #f2f2f5;
 
   --color-light-100: #d6e0ff;
   --color-light-400: #6870a6;
@@ -23,8 +25,6 @@
   --color-dark-300: #242633;
 
   --font-mona-sans: "Mona Sans", sans-serif;
-
-  --bg-pattern: url("/pattern.png");
 }
 
 :root {
@@ -190,7 +190,7 @@
   }
 
   .card {
-    @apply dark-gradient rounded-2xl min-h-full;
+    @apply auth-card-gradient rounded-2xl min-h-full;
   }
 
   .form {
@@ -257,9 +257,9 @@
     }
   }
 
-  .auth-layout {
+  /* .auth-layout {
     @apply flex items-center justify-center mx-auto max-w-7xl min-h-screen max-sm:px-4 max-sm:py-8;
-  }
+  } */
 
   .root-layout {
     @apply flex mx-auto max-w-7xl flex-col gap-12 my-12 px-16 max-sm:px-4 max-sm:my-8;
@@ -269,6 +269,9 @@
     @apply flex flex-row blue-gradient-dark rounded-3xl px-16 py-6 items-center justify-between max-sm:px-4;
   }
 
+  .card-cta2 {
+    @apply flex flex-row dark-gradient rounded-2xl min-h-full p-6 relative overflow-hidden gap-10 justify-between;
+  }
   .interviews-section {
     @apply flex flex-wrap gap-4 max-lg:flex-col w-full items-stretch;
   }
@@ -282,11 +285,11 @@
   }
 
   .tech-tooltip {
-    @apply absolute bottom-full mb-1 hidden group-hover:flex px-2 py-1 text-xs text-white bg-black border-1 border-[#7c7c7c] rounded-md shadow-md animate-fadeIn duration-300;
+    @apply absolute bottom-full mb-1 hidden group-hover:flex px-2 py-1 text-xs text-white bg-[#000000ef] backdrop-blur-3xl border-1 border-[#7c7c7c] rounded-sm shadow-md animate-fadeIn duration-300;
   }
 
   .card-interview {
-    @apply dark-gradient rounded-2xl min-h-full flex flex-col p-6 relative overflow-hidden gap-10 justify-between;
+    @apply dark-gradient rounded-2xl min-h-full flex flex-col p-6 relative overflow-hidden gap-8 justify-between;
 
     .badge-text {
       @apply text-sm font-semibold capitalize;
@@ -298,12 +301,12 @@
   @apply bg-gradient-to-b from-[#1A1C20] to-[#08090D];
 }
 
-@utility border-gradient {
-  @apply bg-gradient-to-b from-[#4B4D4F] to-[#4B4D4F33];
+@utility auth-card-gradient {
+  @apply bg-[#33466379] backdrop-blur-3xl;
 }
 
-@utility pattern {
-  @apply bg-[url('/pattern.png')] bg-top bg-no-repeat;
+@utility border-gradient {
+  @apply bg-gradient-to-b from-[#b2b7c1] to-[#4B4D4F33];
 }
 
 @utility blue-gradient-dark {

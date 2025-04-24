@@ -10,7 +10,7 @@ const DisplayTechIcons = async ({ techStack }: TechIconProps) => {
         <div
           key={index}
           className={cn(
-            "relative group bg-dark-300 rounded-full p-2 flex-center",
+            "relative group border bg-[#1f1f1f99] backdrop-blur-xl rounded-full p-2 flex-center",
             index >= 1 && "-ml-3"
           )}
         >
@@ -20,7 +20,7 @@ const DisplayTechIcons = async ({ techStack }: TechIconProps) => {
             width={100}
             height={100}
             alt={tech}
-            className="size-6"
+            className="size-5"
           />
         </div>
       ))}
