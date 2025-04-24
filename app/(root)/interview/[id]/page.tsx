@@ -1,17 +1,21 @@
-import { redirect } from "next/navigation";
 import Image from "next/image";
-import { getRandomInterviewCover } from "@/lib/utils";
-import { getInterviewsById } from "@/lib/actions/general.action";
-import DisplayTechIcons from "@/components/DisplayTechIcons";
+import { redirect } from "next/navigation";
+
 import Agent from "@/components/Agent";
+import { getRandomInterviewCover } from "@/lib/utils";
+
+import { getInterviewsById } from "@/lib/actions/general.action";
 import { getCurrentUser } from "@/lib/actions/auth.action";
+import DisplayTechIcons from "@/components/DisplayTechIcons";
 
-const page = async ({ params }: RouteParams) => {
+const InterviewDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
-  const user = await getCurrentUser();
-  const interview = await getInterviewsById(id);
 
+  const user = await getCurrentUser();
+
+  const interview = await getInterviewsById(id);
   if (!interview) redirect("/");
+
   return (
     <>
       <div className="flex flex-row gap-4 justify-between">
@@ -34,7 +38,7 @@ const page = async ({ params }: RouteParams) => {
       </div>
 
       <Agent
-        userName={user?.name || ""}
+        userName={user?.name!}
         userId={user?.id}
         type="interview"
         interviewId={id}
@@ -44,4 +48,4 @@ const page = async ({ params }: RouteParams) => {
   );
 };
 
-export default page;
+export default InterviewDetails;

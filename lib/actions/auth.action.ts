@@ -41,6 +41,7 @@ export async function signUp(params: SignUpParams) {
     };
   }
 }
+
 //verifies the user by using the email and idToken from Firebase Authentication, then creates a session cookie
 export async function signIn(params: SignInParams) {
   const { email, idToken } = params;
@@ -77,7 +78,14 @@ export async function setSessionCookie(idToken: string) {
   });
 }
 
+// to sign out a user (either delete OR maxAge = 0 OR set empty cookie)
+export async function signOut() {
+  const cookieStore = await cookies();
+  cookieStore.delete("session");
+}
+
 // ------to prevent access to protected routes-----
+
 //checks if a session cookie exists and verifies the user's session by decoding the cookie and fetching the corresponding user record from Firestore
 export async function getCurrentUser(): Promise<User | null> {
   const cookieStore = await cookies();

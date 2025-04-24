@@ -22,7 +22,7 @@ export async function getInterviewsByUserId(
 }
 
 // fetch all the interivews of other users
-export async function getLatestInterviews(
+export async function getOtherInterviews(
   params: GetLatestInterviewsParams
 ): Promise<Interview[] | null> {
   const { userId, limit = 20 } = params;
