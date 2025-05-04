@@ -21,6 +21,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
     if (isExpanded) setIsExpanded(false);
   };
 
+  // reel-like functionality
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (liked) return; // prevent multiple likes for now (from UI)
@@ -34,7 +35,6 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
       console.error("Failed to like:", error);
     }
   };
-  //checking if the user has already liked this reel
   useEffect(() => {
     const checkIfUserLiked = async () => {
       const user = await getCurrentUser();
@@ -45,29 +45,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
     checkIfUserLiked();
   }, [reel.likedBy]);
 
-  // const speakText = (text: string, voiceName: string) => {
-  //   const synth = window.speechSynthesis;
-  //   if (!synth) {
-  //     toast.error("Speech Synthesis Web API Not Supported by your browser.");
-  //     return;
-  //   }
-  //   synth.cancel(); // Always stop any previous speech
-
-  //   const voices = synth.getVoices();
-  //   if (voices.length === 0) {
-  //     toast.error("No voices available in Speech Synthesis Web API.");
-  //     return;
-  //   }
-
-  //   //finding voice matching the stored voicename
-  //   const matchedVoice = voices.find((voice) => voice.name === voiceName);
-
-  //   const utterance = new SpeechSynthesisUtterance(text);
-  //   utterance.voice = matchedVoice || voices[7];
-  //   utterance.rate = 1;
-
-  //   synth.speak(utterance);
-  // };
+  // TTS + observer intersection functionality
   const speakText = (text: string, voiceName: string) => {
     const synth = window.speechSynthesis;
     if (!synth) {
@@ -76,7 +54,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
     }
 
     const speak = () => {
-      synth.cancel(); // Always stop any previous speech
+      synth.cancel(); // always stop any previous speech
 
       const voices = synth.getVoices();
       if (voices.length === 0) {
@@ -97,7 +75,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
     if (voices.length > 0) {
       speak();
     } else {
-      // Voices not ready yet — wait
+      // if voices not ready yet we wait
       const handleVoicesChanged = () => {
         speak();
         synth.removeEventListener("voiceschanged", handleVoicesChanged);

@@ -30,7 +30,7 @@ import {
 
 import { saveReel } from "@/lib//actions/general.action";
 import { auth } from "@/firebase/client";
-import { getRandomVoiceName, toTitleCase } from "@/lib/utils";
+import { toTitleCase } from "@/lib/utils";
 
 const formSchema = z.object({
   celebrityName: z.string().min(4, {
@@ -70,17 +70,17 @@ export default function SportsReelGenerator() {
       //generating reel content
       const result = await generateSportsReelContent(values);
       setReelResult(result);
+      console.log(result);
       toast.success(`Content ready for ${values.celebrityName}!`);
 
       //saving reel content in firestore
       const userId = auth.currentUser?.uid!;
-      const randomVoice = getRandomVoiceName();
       await saveReel({
         userId,
         celebrityName: values.celebrityName,
         reelContent: result.reelContent,
         imageUrl: result.image,
-        voiceName: randomVoice,
+        voiceName: result.voiceName,
       });
     } catch (error) {
       console.error("Error generating reel:", error);
@@ -105,7 +105,7 @@ export default function SportsReelGenerator() {
     };
   }, []);
 
-  const handleSpeak = (text: string) => {
+  const handleSpeak = (text: string, voiceName: string) => {
     const synth = window.speechSynthesis;
 
     if (!synth) {
@@ -125,14 +125,16 @@ export default function SportsReelGenerator() {
       synth.cancel(); // ensures no overlap, if user clicks frequently
 
       const voices = synth.getVoices();
-      const allowedIndices = [0, 1, 3, 4, 6, 7, 8];
-      const filteredVoices = allowedIndices
-        .map((index) => voices[index])
-        .filter(Boolean);
-      const randomVoice =
-        filteredVoices[Math.floor(Math.random() * filteredVoices.length)];
+      if (voices.length === 0) {
+        toast.error("No voices available in Speech Synthesis Web API.");
+        return;
+      }
+      const matchedVoice = voices.find((voice) => voice.name === voiceName);
+      // const allowedIndices = [0, 1, 3, 4, 6, 7, 8];
+
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.voice = randomVoice;
+      utterance.voice = matchedVoice || voices[7];
+      utterance.rate = 1;
 
       utterance.onstart = () => setIsSpeaking(true);
       utterance.onend = () => {
@@ -234,7 +236,12 @@ export default function SportsReelGenerator() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleSpeak(reelResult.reelContent)}
+                          onClick={() =>
+                            handleSpeak(
+                              reelResult.reelContent,
+                              reelResult.voiceName
+                            )
+                          }
                           aria-label={
                             isSpeaking ? "Stop reading aloud" : "Read aloud"
                           }

@@ -7,6 +7,7 @@
 
 import { ai } from "@/genkit/ai-instance";
 import { z } from "genkit";
+import { getRandomVoiceName } from "@/lib/utils";
 
 const GenerateSportsReelContentInputSchema = z.object({
   celebrityName: z.string().describe("The name of the sports celebrity."),
@@ -24,6 +25,11 @@ const GenerateSportsReelContentOutputSchema = z.object({
     .optional()
     .describe(
       "An image to use in the sports reel, as a data URI. May be empty/undefined if generation fails."
+    ),
+  voiceName: z
+    .string()
+    .describe(
+      "The voice name (from Speech Synthesis API) selected for the reel narration."
     ),
 });
 export type GenerateSportsReelContentOutput = z.infer<
@@ -104,9 +110,12 @@ const generateSportsReelContentFlow = ai.defineFlow<
       );
     }
 
+    const randomVoice = getRandomVoiceName();
+
     return {
       reelContent: reelContent,
       image: imageUrl,
+      voiceName: randomVoice,
     };
   }
 );
