@@ -1,131 +1,99 @@
 "use server";
-import { google } from "@ai-sdk/google";
-import { generateObject } from "ai";
 
-import { feedbackSchema } from "@/constants";
 import { db } from "@/firebase/admin";
+import { getCurrentUser } from "./auth.action";
 
-// fetch all the interview associated with a user
-export async function getInterviewsByUserId(
-  userId: string
-): Promise<Interview[] | null> {
-  const interviews = await db
-    .collection("interviews")
-    .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
-    .get();
+import { FieldValue } from "firebase-admin/firestore";
 
-  return interviews.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Interview[];
-}
-
-// fetch all the interivews of other users
-export async function getOtherInterviews(
-  params: GetLatestInterviewsParams
-): Promise<Interview[] | null> {
-  const { userId, limit = 20 } = params;
-
-  const interviews = await db
-    .collection("interviews")
-    .orderBy("createdAt", "desc")
-    .where("finalized", "==", true)
-    .where("userId", "!=", userId)
-    .limit(limit)
-    .get();
-
-  return interviews.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Interview[];
-}
-
-// get generated interview details from interview ID
-export async function getInterviewsById(id: string): Promise<Interview | null> {
-  const interview = await db.collection("interviews").doc(id).get();
-
-  return (interview.data() as Interview) || null;
-}
-
-export async function createFeedback(params: CreateFeedbackParams) {
-  const { interviewId, userId, transcript, feedbackId } = params;
+//save reel content to firestore
+export async function saveReel(params: SaveReelParams) {
+  const { userId, celebrityName, reelContent, imageUrl, voiceName } = params;
 
   try {
-    const formattedTranscript = transcript
-      .map(
-        (sentence: { role: string; content: string }) =>
-          `-${sentence.role}: ${sentence.content}\n`
-      )
-      .join("");
-
-    const {
-      object: {
-        totalScore,
-        categoryScores,
-        strengths,
-        areasForImprovement,
-        finalAssessment,
-      },
-    } = await generateObject({
-      model: google("gemini-2.0-flash-001", {
-        structuredOutputs: false,
-      }),
-      schema: feedbackSchema,
-      prompt: `
-        You are an AI interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories. Be thorough and detailed in your analysis. Don't be lenient with the candidate. If there are mistakes or areas for improvement, point them out.
-        Transcript:
-        ${formattedTranscript}
-
-        Please score the candidate from 0 to 100 in the following areas. Do not add categories other than the ones provided:
-        - **Communication Skills**: Clarity, articulation, structured responses.
-        - **Technical Knowledge**: Understanding of key concepts for the role.
-        - **Problem-Solving**: Ability to analyze problems and propose solutions.
-        - **Cultural & Role Fit**: Alignment with company values and job role.
-        - **Confidence & Clarity**: Confidence in responses, engagement, and clarity.
-        `,
-      system:
-        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories",
-    });
-
-    const feedback = await db.collection("feedback").add({
-      interviewId,
+    const reelRef = db.collection("reels").doc(); // Auto-id
+    await reelRef.set({
       userId,
-      totalScore,
-      categoryScores,
-      strengths,
-      areasForImprovement,
-      finalAssessment,
+      celebrityName,
+      reelContent,
+      imageUrl: imageUrl || null,
+      voiceName,
       createdAt: new Date().toISOString(),
     });
-
-    return {
-      success: true,
-      feedbackId: feedback.id,
-    };
-  } catch (e) {
-    console.error("Error saving feedback", e);
-    return { success: false };
+    return { success: true, id: reelRef.id };
+  } catch (error) {
+    console.error("Error saving reel:", error);
+    return { success: false, error };
   }
 }
 
-export async function getFeedbackByInterviewId(
-  params: GetFeedbackByInterviewIdParams
-): Promise<Feedback | null> {
-  const { interviewId, userId } = params;
-
-  const feedback = await db
-    .collection("feedback")
-    .where("interviewId", "==", interviewId)
+//fetch all the reels associated with a user
+export async function getReelsByUserId(userId: string): Promise<Reel[] | null> {
+  const reels = await db
+    .collection("reels")
     .where("userId", "==", userId)
-    .limit(1)
+    .orderBy("createdAt", "desc")
     .get();
-  if (feedback.empty) return null;
 
-  const feedbackDoc = feedback.docs[0];
+  return reels.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Reel[];
+}
 
-  return {
-    id: feedbackDoc.id,
-    ...feedbackDoc.data(),
-  } as Feedback;
+// fetch all the reels for global reel page
+export async function getAllReels(
+  params: GetLatestReelsParams
+): Promise<Reel[] | null> {
+  const { limit = 50 } = params; //default reels limit is 50
+
+  const reels = await db
+    .collection("reels")
+    .orderBy("createdAt", "desc")
+    // .where("userId", "!=", userId) //if we dont want to show reels created by user himself, in the global reels page
+    .limit(limit)
+    .get();
+
+  return reels.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Reel[];
+}
+
+// like a reel (increment likesCount)
+export async function likeReel(reelId: string) {
+  const user = await getCurrentUser();
+
+  if (!user || !user.id) {
+    throw new Error("User not authenticated");
+  }
+
+  const reelRef = db.collection("reels").doc(reelId);
+
+  try {
+    await db.runTransaction(async (transaction) => {
+      const reelSnap = await transaction.get(reelRef);
+
+      if (!reelSnap.exists) {
+        throw new Error("Reel not found");
+      }
+
+      const reelData = reelSnap.data();
+
+      // Check if user has already liked within the transaction
+      if (reelData?.likedBy && reelData?.likedBy.includes(user.id)) {
+        throw new Error("User already liked this reel");
+      }
+
+      // Atomically increment like count & add userId to likedBy array
+      transaction.update(reelRef, {
+        likesCount: (reelData?.likesCount || 0) + 1,
+        likedBy: FieldValue.arrayUnion(user.id),
+      });
+    });
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error liking reel:", error);
+    return { success: false, error: error.message || "Failed to like reel" };
+  }
 }

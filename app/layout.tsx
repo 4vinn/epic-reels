@@ -9,8 +9,13 @@ const monaSans = Mona_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "PrepTalk",
-  description: "Get prepared for any interview!",
+  title: "EpicReels",
+  description: "Generate sport celebrity history reels with AI!",
+  openGraph: {
+    title: "EpicReels",
+    description: "Generate sport celebrity history reels with AI!",
+    images: ["/epicreel.png"],
+  },
 };
 
 export default function RootLayout({

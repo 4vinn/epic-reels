@@ -28,7 +28,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
   const formSchema = authFormSchema(type);
 
-  // 1. Define your form.
+  // 1. defining form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +38,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
     },
   });
 
-  // 2. Define a submit handler.
+  // 2. defining a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       if (type === "sign-up") {
@@ -97,13 +97,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
       <div className="flex flex-col gap-6 card py-14 px-10">
         <div className="flex flex-row gap-2 justify-center">
           <Image
-            src="/logo2.png"
-            className="bg-white rounded-md p-[2px]"
+            src="/logo.png"
+            className="bg-white rounded-md"
             alt="logo"
             height={40}
             width={40}
           />
-          <h2 className="text-primary-100">PrepTalk</h2>
+          <h2 className="text-primary-100">EpicReels</h2>
         </div>
 
         <Form {...form}>

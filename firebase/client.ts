@@ -5,13 +5,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCjpgdR5qRKOuggdIj4jJrokemfUuQb20E",
-  authDomain: "preptalk-92a7a.firebaseapp.com",
-  projectId: "preptalk-92a7a",
-  storageBucket: "preptalk-92a7a.firebasestorage.app",
-  messagingSenderId: "493962333137",
-  appId: "1:493962333137:web:650569669597baf196eef0",
-  measurementId: "G-QSBZ4KJYNR",
+  apiKey: "AIzaSyDHVyA8lCN0PH_PARK5vGafdnrbRWnE0DQ",
+  authDomain: "epicreel.firebaseapp.com",
+  projectId: "epicreel",
+  storageBucket: "epicreel.firebasestorage.app",
+  messagingSenderId: "531812335660",
+  appId: "1:531812335660:web:a0753f950b2d26f16ad189",
+  measurementId: "G-LSJQVF85HF",
 };
 
 // Initialize Firebase
