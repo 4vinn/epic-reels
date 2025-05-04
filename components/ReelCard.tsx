@@ -137,7 +137,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
       className="h-screen w-full flex justify-center items-center snap-start relative"
       onClick={handleCollapse}
     >
-      <div className="relative mt-2">
+      <div className="relative">
         {/* Outer blurred glow */}
         <div className="absolute -inset-2 rounded-[inherit] bg-[#e6e6e6]/30 blur-3xl z-0" />
         {/* Main Reel content */}
