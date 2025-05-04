@@ -141,7 +141,7 @@ const ReelCard = ({ reel, showLikeButton = false }: ReelCardProps) => {
         {/* Outer blurred glow */}
         <div className="absolute -inset-2 rounded-[inherit] bg-[#e6e6e6]/30 blur-3xl z-0" />
         {/* Main Reel content */}
-        <div className="relative w-[360px] h-[80vh] md:h-[90vh] bg-black rounded-xl overflow-hidden border border-[#5b5b5b]">
+        <div className="relative w-[360px] h-[75vh] md:h-[90vh] bg-black rounded-xl overflow-hidden border border-[#5b5b5b]">
           <Image
             src={reel.imageUrl}
             alt={`Image for ${reel.celebrityName}`}
